@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>要乖哦 | Be Good V12.0 Real</title>
+    <title>要乖哦 | V13.0 Complete</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -12,14 +12,20 @@
     
     <style>
         :root { --accent: #ff7eb9; --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-gradient); min-height: 100vh; padding-top: 260px; padding-bottom: 100px; }
-        .glass-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.8); border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .fixed-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 1.2rem; }
-        .check-custom { appearance: none; width: 24px; height: 24px; border: 2px solid #cbd5e1; border-radius: 50%; transition: 0.2s; position: relative; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-gradient); min-height: 100vh; padding-top: 280px; padding-bottom: 100px; }
+        
+        /* 玻璃拟态与组件样式 */
+        .glass-card { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .fixed-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 1.2rem; }
+        .check-custom { appearance: none; width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 6px; transition: 0.2s; position: relative; }
         .check-custom:checked { background: var(--accent); border-color: var(--accent); }
-        .check-custom:checked::after { content: '✔'; position: absolute; color: white; left: 6px; top: 0; font-size: 14px; }
-        .tab-btn.active { color: var(--accent); transform: scale(1.1); font-weight: bold; }
+        .check-custom:checked::after { content: '✔'; position: absolute; color: white; left: 5px; top: -1px; font-size: 14px; font-weight: bold; }
+        .tab-btn.active { color: var(--accent); transform: scale(1.1); font-weight: 800; }
         .hidden { display: none !important; }
+        
+        /* 动画 */
+        @keyframes pulse-slow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
+        .breathing-circle { animation: pulse-slow 4s infinite ease-in-out; }
     </style>
 </head>
 <body>
@@ -28,44 +34,79 @@
         <div class="flex justify-between items-start mb-3">
             <div>
                 <h1 class="text-2xl font-black italic tracking-tighter">要乖哦<span class="text-pink-500">.</span></h1>
-                <p class="text-[10px] text-gray-400 mt-1" id="dateDisplay">LOADING...</p>
+                <p class="text-[10px] text-gray-500 font-bold mt-1" id="currentDateDisplay">LOADING...</p>
             </div>
             <div class="text-right">
                 <div class="bg-black text-white px-3 py-1 rounded-lg inline-block shadow-lg">
-                    <p class="text-[8px] opacity-70 uppercase tracking-widest">TIMELINE</p>
+                    <p class="text-[8px] opacity-60 uppercase tracking-widest">TIMELINE</p>
                     <p class="text-xs font-bold" id="timelineDisplay">Day 1</p>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 mb-2">
-            <select id="p_gender" onchange="saveProfile()" class="bg-white/50 rounded-lg p-2 text-xs font-bold outline-none text-center">
-                <option value="female">👧 女生</option>
-                <option value="male">👦 男生</option>
-            </select>
-            <input id="p_height" type="number" oninput="saveProfile()" placeholder="身高 cm" class="bg-white/50 rounded-lg p-2 text-center text-xs font-bold outline-none">
-            <input id="p_goal_date" type="date" onchange="saveProfile()" class="bg-white/50 rounded-lg p-2 text-center text-[10px] font-bold outline-none text-gray-500">
+        <div class="glass-card p-3 mb-2 grid grid-cols-2 gap-3">
+            <div>
+                <p class="text-[8px] text-gray-400 font-bold mb-1">性别 & 目标日期</p>
+                <div class="flex gap-2">
+                    <select id="p_gender" onchange="saveProfile()" class="bg-gray-50 rounded p-1 text-xs font-bold w-1/2 outline-none"><option value="female">女 👧</option><option value="male">男 👦</option></select>
+                    <input id="p_goal_date" type="date" onchange="saveProfile()" class="bg-gray-50 rounded p-1 text-[10px] font-bold w-1/2 outline-none">
+                </div>
+            </div>
+            <div>
+                <p class="text-[8px] text-gray-400 font-bold mb-1">身高 & 目标体重</p>
+                <div class="flex gap-2">
+                    <input id="p_height" type="number" oninput="saveProfile()" placeholder="CM" class="bg-gray-50 rounded p-1 text-xs font-bold w-1/2 text-center outline-none">
+                    <input id="p_goal" type="number" oninput="saveProfile()" placeholder="KG" class="bg-gray-50 rounded p-1 text-xs font-bold w-1/2 text-center text-green-600 outline-none">
+                </div>
+            </div>
         </div>
         
-        <div class="grid grid-cols-3 gap-2 mb-3">
-            <div class="bg-white p-2 rounded-lg text-center border border-gray-100"><p class="text-[8px] text-gray-400">当前体重</p><input id="p_weight" type="number" oninput="saveDailyData()" class="w-full text-center font-black text-sm outline-none" placeholder="0.0"></div>
-            <div class="bg-pink-50 p-2 rounded-lg text-center border border-pink-100"><p class="text-[8px] text-pink-400">当前腰围</p><input id="p_waist" type="number" oninput="saveDailyData()" class="w-full text-center font-black text-sm outline-none text-pink-600" placeholder="0.0"></div>
-            <div class="bg-green-50 p-2 rounded-lg text-center border border-green-100"><p class="text-[8px] text-green-500">目标体重</p><input id="p_goal" type="number" oninput="saveProfile()" class="w-full text-center font-black text-sm outline-none text-green-600" placeholder="0.0"></div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-pink-50/80 p-2 rounded-xl text-center border border-pink-100 relative">
+                <p class="text-[8px] text-pink-400 font-bold uppercase">今日腰围</p>
+                <input id="today_waist" type="number" oninput="saveDaily()" class="w-full bg-transparent text-center font-black text-lg text-pink-600 outline-none" placeholder="0.0">
+                <span class="text-[8px] absolute bottom-2 right-2 text-pink-300">CM</span>
+            </div>
+            <div class="bg-blue-50/80 p-2 rounded-xl text-center border border-blue-100 relative">
+                <p class="text-[8px] text-blue-400 font-bold uppercase">今日体重</p>
+                <input id="today_weight" type="number" oninput="saveDaily()" class="w-full bg-transparent text-center font-black text-lg text-blue-600 outline-none" placeholder="0.0">
+                <span class="text-[8px] absolute bottom-2 right-2 text-blue-300">KG</span>
+            </div>
         </div>
     </header>
 
     <main class="px-5">
         
-        <div id="tab-tasks" class="space-y-3 pb-24"></div>
+        <div id="tab-tasks" class="space-y-3 pb-24">
+            <div id="taskListArea"></div>
+        </div>
+
+        <div id="tab-social" class="hidden pb-24 space-y-4">
+            <div class="glass-card p-4">
+                <textarea id="socialText" placeholder="今天坚持得怎么样？(限7分钟视频/图片)" class="w-full bg-transparent outline-none text-sm h-16"></textarea>
+                <div class="flex items-center gap-4 mt-2 border-t pt-2">
+                    <label class="text-pink-500 cursor-pointer"><i class="fa-solid fa-image"></i><input type="file" accept="image/*" class="hidden"></label>
+                    <label class="text-blue-500 cursor-pointer"><i class="fa-solid fa-video"></i><input type="file" accept="video/*" class="hidden" onchange="checkVideo(this)"></label>
+                    <button onclick="alert('动态发布成功！(模拟)')" class="ml-auto bg-black text-white px-4 py-1 rounded-full text-xs font-bold">发布</button>
+                </div>
+            </div>
+            <div class="glass-card p-4">
+                <div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-full bg-pink-200"></div><p class="text-xs font-bold">自律达人</p></div>
+                <p class="text-sm text-gray-600">打卡第10天，腰围真的小了！</p>
+            </div>
+        </div>
 
         <div id="tab-stats" class="hidden space-y-5 pb-24">
             <div class="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-5 rounded-2xl shadow-xl">
-                <h3 class="text-xs font-bold opacity-50 uppercase mb-2">本周 AI 总结</h3>
-                <p id="weekSummary" class="text-sm leading-relaxed italic">暂无足够数据，请开始今天的打卡吧！</p>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xs font-bold opacity-50 uppercase">本周 AI 总结</h3>
+                    <span id="weekRate" class="text-xl font-black text-yellow-400">0%</span>
+                </div>
+                <p id="weekSummary" class="text-sm leading-relaxed italic text-gray-300">数据不足，请开始您的自律之旅...</p>
             </div>
 
             <div class="glass-card p-4">
-                <h3 class="text-xs font-black text-gray-400 mb-3 uppercase">近7天打卡完成率</h3>
+                <h3 class="text-xs font-black text-gray-400 mb-3 uppercase">近7天打卡统计</h3>
                 <canvas id="chartHabit" height="150"></canvas>
             </div>
             <div class="glass-card p-4">
@@ -77,18 +118,19 @@
                 <canvas id="chartWaist" height="150"></canvas>
             </div>
         </div>
-
-        <div id="tab-social" class="hidden pb-24 text-center pt-10 text-gray-400 text-xs">
-            <p>社交功能模块运行正常 (同V11.0)</p>
-        </div>
     </main>
 
-    <div id="playerOverlay" class="hidden fixed inset-0 bg-white/95 z-[100] flex flex-col items-center justify-center p-8">
-        <div class="animate-bounce text-6xl mb-8">🎵</div>
-        <h2 id="playerTitle" class="text-2xl font-black mb-2">播放中...</h2>
-        <p id="playerTime" class="text-6xl font-black text-pink-500 tabular-nums my-6">15:00</p>
-        <p class="text-gray-400 text-xs mb-10">请保持音量适中，享受律动</p>
-        <button onclick="stopMusic()" class="px-10 py-3 bg-black text-white rounded-full font-bold">结束训练</button>
+    <div id="mediaOverlay" class="hidden fixed inset-0 bg-white/95 z-[100] flex flex-col items-center justify-center p-8 text-center">
+        <div id="visualCircle" class="w-64 h-64 bg-pink-100 rounded-full flex items-center justify-center mb-10 shadow-2xl breathing-circle hidden">
+            <span class="text-4xl">🧘‍♀️</span>
+        </div>
+        <div id="visualMusic" class="text-6xl animate-bounce mb-10 hidden">🎵</div>
+        
+        <h2 id="mediaTitle" class="text-3xl font-black mb-2">准备开始</h2>
+        <p id="mediaTimer" class="text-6xl font-black text-gray-800 tabular-nums my-4">00:00</p>
+        <p id="mediaSubtitle" class="text-gray-500 text-sm h-12">保持专注...</p>
+        
+        <button onclick="stopMedia()" class="mt-8 px-12 py-4 bg-black text-white rounded-full font-bold shadow-lg">结束训练</button>
     </div>
 
     <nav class="fixed bottom-6 left-6 right-6 h-16 glass-card flex justify-around items-center px-2 z-50">
@@ -98,262 +140,352 @@
     </nav>
 
     <script>
-        // --- 核心逻辑变量 ---
-        const DB_KEY = 'begood_v12_db'; // 总数据库 Key
-        let appData = {};
+        // --- 核心配置 ---
+        const DB_KEY = 'begood_v13_master';
+        let db = {};
         let audioCtx = null;
-        let musicTimer = null;
+        let activeInterval = null;
         let isPlaying = false;
-        
-        // --- 1. 初始化与时间轴 ---
+        const synth = window.speechSynthesis;
+
+        // --- 全量任务列表 (V5.0 内容回归) ---
+        const TASKS_WORKDAY = [
+            { t:'07:00', txt:'起床：温水 300ml' },
+            { t:'07:05', txt:'真空腹呼吸 3组', type:'vacuum' },
+            { t:'07:20', txt:'站姿唤醒 2分钟' },
+            { t:'07:30', txt:'早餐：蛋白+蔬菜' },
+            { t:'07:45', txt:'出发去公司' },
+            { t:'09:00', txt:'开启工作模式' },
+            { t:'10:00', txt:'起身活动+喝水' },
+            { t:'11:00', txt:'起身活动+喝水' },
+            { t:'12:30', txt:'午餐：碳水+蛋白+蔬菜' },
+            { t:'12:55', txt:'餐后慢走 15分钟', type:'walk' },
+            { t:'14:30', txt:'起身+喝水' },
+            { t:'15:30', txt:'起身+喝水' },
+            { t:'16:30', txt:'起身+喝水' },
+            { t:'18:10', txt:'开车回家' },
+            { t:'19:00', txt:'力量/有氧训练' },
+            { t:'20:00', txt:'晚餐：蛋白+蔬菜+少盐' },
+            { t:'21:00', txt:'真空腹呼吸 3组', type:'vacuum' },
+            { t:'21:15', txt:'拉伸、放松' },
+            { t:'22:30', txt:'上床入睡' }
+        ];
+
+        const TASKS_WEEKEND = [
+            { t:'09:30', txt:'起床：温水 300ml' },
+            { t:'09:35', txt:'真空腹呼吸 3组', type:'vacuum' },
+            { t:'09:50', txt:'站姿唤醒 2分钟' },
+            { t:'10:00', txt:'早餐：蛋白+蔬菜' },
+            { t:'12:00', txt:'午餐：碳水+蛋白+蔬菜' },
+            { t:'13:30', txt:'餐后慢走 15分钟', type:'walk' },
+            { t:'19:00', txt:'有氧训练' },
+            { t:'20:00', txt:'晚餐：蛋白+蔬菜+少盐' },
+            { t:'21:00', txt:'真空腹呼吸 3组', type:'vacuum' },
+            { t:'21:15', txt:'拉伸、放松' },
+            { t:'23:30', txt:'上床入睡' }
+        ];
+
+        // --- 初始化逻辑 ---
         window.onload = () => {
             initDB();
-            updateDateHeader();
-            renderTasks();
-            loadInputs();
+            renderHeader();
+            renderTaskList();
+            loadTodayInputs();
         };
 
         function initDB() {
             const raw = localStorage.getItem(DB_KEY);
             if (raw) {
-                appData = JSON.parse(raw);
+                db = JSON.parse(raw);
             } else {
-                // 首次使用，初始化锁死日期
-                appData = {
-                    profile: { gender: 'female', height: '', goal: '', goal_date: '' },
-                    history: {}, // 格式: "2026-02-09": { weight: 60, waist: 80, checks: [true, false...] }
-                    startDate: new Date().toISOString().split('T')[0]
+                db = {
+                    startDate: new Date().toISOString().split('T')[0], // 锁死创建日期
+                    profile: { gender:'female', height:'', goal:'', goal_date:'' },
+                    history: {} 
                 };
                 saveDB();
             }
         }
 
         function saveDB() {
-            localStorage.setItem(DB_KEY, JSON.stringify(appData));
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
         }
 
-        function updateDateHeader() {
+        function renderHeader() {
+            // 日期显示
             const now = new Date();
-            const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
-            document.getElementById('dateDisplay').innerText = dateStr;
+            const dateStr = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+            document.getElementById('currentDateDisplay').innerText = dateStr;
 
-            // 计算 Week X Day Y
-            const start = new Date(appData.startDate);
-            const diffTime = Math.abs(now - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            const week = Math.ceil(diffDays / 7);
-            const dayInWeek = diffDays % 7 || 7;
-            
-            document.getElementById('timelineDisplay').innerText = `第${week}周 · 第${dayInWeek}天`;
+            // 时间轴计算
+            const start = new Date(db.startDate);
+            const diff = Math.floor((now - start) / (1000*60*60*24));
+            const dayNum = diff + 1;
+            const weekNum = Math.ceil(dayNum / 7);
+            document.getElementById('timelineDisplay').innerText = `第${weekNum}周 · 第${dayNum}天`;
+
+            // 回填 Profile
+            document.getElementById('p_gender').value = db.profile.gender;
+            document.getElementById('p_height').value = db.profile.height;
+            document.getElementById('p_goal').value = db.profile.goal;
+            document.getElementById('p_goal_date').value = db.profile.goal_date;
         }
 
-        // --- 2. 数据保存 (Profile & Daily) ---
+        // --- 核心业务：打卡与每日重置 ---
+        function renderTaskList() {
+            const day = new Date().getDay();
+            const isWeekend = (day === 0 || day === 6);
+            const todayKey = new Date().toISOString().split('T')[0];
+            
+            // 确保今日数据结构存在
+            if (!db.history[todayKey]) db.history[todayKey] = { checks: [], weight: null, waist: null };
+            
+            const taskSource = isWeekend ? TASKS_WEEKEND : TASKS_WORKDAY;
+            
+            const html = taskSource.map((item, idx) => {
+                const isChecked = db.history[todayKey].checks[idx] || false;
+                return `
+                <div class="glass-card p-4 flex justify-between items-center transition-all ${isChecked ? 'opacity-50' : ''}">
+                    <div class="flex gap-4 items-start">
+                        <span class="text-[10px] font-black text-gray-400 mt-1 w-8">${item.t}</span>
+                        <div>
+                            <p class="font-bold text-gray-800 text-sm ${isChecked ? 'line-through' : ''}">${item.txt}</p>
+                            ${item.type === 'vacuum' ? 
+                                `<button onclick="startVacuum()" class="mt-2 text-[10px] bg-pink-500 text-white px-3 py-1 rounded-full shadow hover:bg-pink-600"><i class="fa-solid fa-wind mr-1"></i>语音引导</button>` : ''}
+                            ${item.type === 'walk' ? 
+                                `<button onclick="startMusic()" class="mt-2 text-[10px] bg-blue-500 text-white px-3 py-1 rounded-full shadow hover:bg-blue-600"><i class="fa-solid fa-music mr-1"></i>开始慢走(音乐)</button>` : ''}
+                        </div>
+                    </div>
+                    <input type="checkbox" class="check-custom" ${isChecked ? 'checked' : ''} onchange="toggleTask(${idx})">
+                </div>
+                `;
+            }).join('');
+            
+            document.getElementById('taskListArea').innerHTML = `<p class="text-[10px] text-gray-400 font-bold mb-2 ml-1">${isWeekend ? 'WEEKEND MODE' : 'WORKDAY MODE'}</p>` + html;
+        }
+
+        function toggleTask(idx) {
+            const todayKey = new Date().toISOString().split('T')[0];
+            db.history[todayKey].checks[idx] = !db.history[todayKey].checks[idx];
+            saveDB();
+            renderTaskList(); // 重绘以更新样式
+        }
+
+        // --- 数据录入 ---
         function saveProfile() {
-            appData.profile.gender = document.getElementById('p_gender').value;
-            appData.profile.height = document.getElementById('p_height').value;
-            appData.profile.goal = document.getElementById('p_goal').value;
-            appData.profile.goal_date = document.getElementById('p_goal_date').value;
+            db.profile.gender = document.getElementById('p_gender').value;
+            db.profile.height = document.getElementById('p_height').value;
+            db.profile.goal = document.getElementById('p_goal').value;
+            db.profile.goal_date = document.getElementById('p_goal_date').value;
             saveDB();
         }
 
-        function saveDailyData() {
-            const today = new Date().toISOString().split('T')[0];
-            if (!appData.history[today]) appData.history[today] = { checks: [] };
-            
-            appData.history[today].weight = parseFloat(document.getElementById('p_weight').value) || null;
-            appData.history[today].waist = parseFloat(document.getElementById('p_waist').value) || null;
+        function saveDaily() {
+            const todayKey = new Date().toISOString().split('T')[0];
+            db.history[todayKey].weight = document.getElementById('today_weight').value;
+            db.history[todayKey].waist = document.getElementById('today_waist').value;
             saveDB();
-            if(!document.getElementById('tab-stats').classList.contains('hidden')) renderCharts(); // 实时更新图表
+            if(!document.getElementById('tab-stats').classList.contains('hidden')) renderCharts();
         }
 
-        function loadInputs() {
-            // Profile
-            document.getElementById('p_gender').value = appData.profile.gender;
-            document.getElementById('p_height').value = appData.profile.height;
-            document.getElementById('p_goal').value = appData.profile.goal;
-            document.getElementById('p_goal_date').value = appData.profile.goal_date;
-            
-            // Daily (Today)
-            const today = new Date().toISOString().split('T')[0];
-            if (appData.history[today]) {
-                document.getElementById('p_weight').value = appData.history[today].weight || '';
-                document.getElementById('p_waist').value = appData.history[today].waist || '';
-            } else {
-                // 新的一天，清空输入框
-                document.getElementById('p_weight').value = '';
-                document.getElementById('p_waist').value = '';
+        function loadTodayInputs() {
+            const todayKey = new Date().toISOString().split('T')[0];
+            if(db.history[todayKey]) {
+                document.getElementById('today_weight').value = db.history[todayKey].weight || '';
+                document.getElementById('today_waist').value = db.history[todayKey].waist || '';
             }
         }
 
-        // --- 3. 任务逻辑 (每日自动刷新) ---
-        function renderTasks() {
-            const day = new Date().getDay();
-            const isWeekend = (day === 0 || day === 6);
-            const today = new Date().toISOString().split('T')[0];
+        // --- 音频引擎 (修复版) ---
+        function showMedia(type) {
+            document.getElementById('mediaOverlay').classList.remove('hidden');
+            document.getElementById('visualCircle').classList.add('hidden');
+            document.getElementById('visualMusic').classList.add('hidden');
             
-            // 确保今天的历史记录存在
-            if (!appData.history[today]) appData.history[today] = { checks: [] };
-            
-            let tasks = isWeekend ? [
-                {t:'09:30', txt:'起床喝温水'}, {t:'09:35', txt:'真空腹 3组', act:'vacuum'}, {t:'13:30', txt:'餐后慢走', act:'walk'}, {t:'23:00', txt:'早睡'}
-            ] : [
-                {t:'07:00', txt:'起床温水'}, {t:'07:05', txt:'真空腹 3组', act:'vacuum'}, {t:'07:30', txt:'营养早餐'}, 
-                {t:'12:55', txt:'餐后慢走', act:'walk'}, {t:'19:00', txt:'每日训练'}, {t:'22:30', txt:'美容觉'}
-            ]; // *简化示例，实际请填入您之前完整的长列表*
-
-            const container = document.getElementById('tab-tasks');
-            container.innerHTML = tasks.map((t, i) => `
-                <div class="glass-card p-4 flex justify-between items-center">
-                    <div class="flex gap-3 items-center">
-                        <span class="text-xs font-bold text-gray-400 w-10">${t.t}</span>
-                        <div>
-                            <p class="text-sm font-bold text-gray-800">${t.txt}</p>
-                            ${t.act === 'walk' ? `<button onclick="startMusic(900)" class="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded mt-1">开始慢走 15min</button>` : ''}
-                            ${t.act === 'vacuum' ? `<button onclick="startMusic(180)" class="text-[10px] bg-pink-100 text-pink-600 px-2 py-1 rounded mt-1">开始呼吸 3min</button>` : ''}
-                        </div>
-                    </div>
-                    <input type="checkbox" class="check-custom" ${appData.history[today].checks[i] ? 'checked' : ''} onchange="toggleCheck(${i})">
-                </div>
-            `).join('');
+            if(type === 'vacuum') document.getElementById('visualCircle').classList.remove('hidden');
+            if(type === 'music') document.getElementById('visualMusic').classList.remove('hidden');
         }
 
-        function toggleCheck(index) {
-            const today = new Date().toISOString().split('T')[0];
-            if(!appData.history[today].checks) appData.history[today].checks = [];
-            appData.history[today].checks[index] = !appData.history[today].checks[index];
-            saveDB();
-        }
-
-        // --- 4. 真实音频引擎 (MusicBox) ---
-        function startMusic(duration) {
-            document.getElementById('playerOverlay').classList.remove('hidden');
-            document.getElementById('playerTitle').innerText = duration === 900 ? "餐后慢走 BGM" : "真空腹计时";
-            
-            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            isPlaying = true;
-            playMelody(); // 启动旋律循环
-            
-            // 倒计时
-            let timeLeft = duration;
-            clearInterval(musicTimer);
-            musicTimer = setInterval(() => {
-                timeLeft--;
-                const m = Math.floor(timeLeft/60);
-                const s = timeLeft%60;
-                document.getElementById('playerTime').innerText = `${m}:${s<10?'0':''}${s}`;
-                if(timeLeft <= 0) stopMusic();
-            }, 1000);
-        }
-
-        function playMelody() {
-            if(!isPlaying) return;
-            // 一个简单的C大调 Loop: C4, E4, G4, C5
-            const notes = [261.63, 329.63, 392.00, 523.25];
-            const now = audioCtx.currentTime;
-            
-            notes.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'square'; // 方波声音更响亮
-                osc.frequency.value = freq;
-                
-                // 包络
-                gain.gain.setValueAtTime(0.05, now + i*0.5);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + i*0.5 + 0.4);
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now + i*0.5);
-                osc.stop(now + i*0.5 + 0.5);
-            });
-
-            // 循环调用
-            setTimeout(playMelody, 2000); 
-        }
-
-        function stopMusic() {
+        function stopMedia() {
+            document.getElementById('mediaOverlay').classList.add('hidden');
+            synth.cancel();
             isPlaying = false;
-            clearInterval(musicTimer);
-            document.getElementById('playerOverlay').classList.add('hidden');
+            clearInterval(activeInterval);
             if(audioCtx) audioCtx.suspend();
         }
 
-        // --- 5. 报表系统 (100% 真实数据) ---
-        let chartInstances = {};
-
-        function renderCharts() {
-            // 获取最近7天日期
-            const dates = [];
-            const today = new Date();
-            for(let i=6; i>=0; i--) {
-                const d = new Date(today);
-                d.setDate(today.getDate() - i);
-                dates.push(d.toISOString().split('T')[0]);
-            }
-
-            // 准备数据
-            const weightData = [];
-            const waistData = [];
-            const taskData = [];
+        // 1. 真空腹语音引导 (V8.0 内容)
+        function startVacuum() {
+            showMedia('vacuum');
+            document.getElementById('mediaTitle').innerText = "真空腹训练";
             
-            let completedTasks = 0;
-            let totalDays = 0;
-
-            dates.forEach(date => {
-                const dayData = appData.history[date];
-                if(dayData) {
-                    weightData.push(dayData.weight || null); // null 会导致图表断开，真实反映缺数据
-                    waistData.push(dayData.waist || null);
-                    
-                    const checks = dayData.checks || [];
-                    const count = checks.filter(Boolean).length;
-                    taskData.push(count);
-                    
-                    if(count > 0) totalDays++;
-                    completedTasks += count;
-                } else {
-                    weightData.push(null);
-                    waistData.push(null);
-                    taskData.push(0);
+            const steps = [
+                "准备姿势，全身放松...",
+                "用鼻子深吸气...感觉肋骨扩张...",
+                "用嘴巴慢慢呼气...把气吐干净...",
+                "【屏气】收紧核心，肚脐找脊柱！保持！",
+                "放松，自然呼吸。"
+            ];
+            
+            let set = 1;
+            let stepIndex = 0;
+            
+            const runStep = () => {
+                if(set > 3) {
+                    speak("训练完成，非常棒！");
+                    setTimeout(stopMedia, 2000);
+                    return;
                 }
-            });
-
-            // 更新周总结
-            const rate = totalDays > 0 ? (completedTasks / (totalDays * 10) * 100).toFixed(0) : 0;
-            document.getElementById('weekSummary').innerText = 
-                totalDays === 0 ? "本周还没有打卡数据，今天是新的开始！" :
-                `本周已打卡 ${totalDays} 天，共完成 ${completedTasks} 项任务。综合完成率 ${rate}%。${rate>80?'非常自律，继续保持！':'还需要再接再厉哦！'}`;
-
-            // 绘制图表 (Chart.js)
-            const createChart = (id, type, label, data, color) => {
-                const ctx = document.getElementById(id);
-                if(chartInstances[id]) chartInstances[id].destroy(); // 销毁旧图表防止重叠
                 
-                chartInstances[id] = new Chart(ctx, {
-                    type: type,
-                    data: {
-                        labels: dates.map(d => d.slice(5)), // 只显示 MM-DD
-                        datasets: [{
-                            label: label,
-                            data: data,
-                            borderColor: color,
-                            backgroundColor: color + '33', // 透明度
-                            tension: 0.4,
-                            fill: true,
-                            spanGaps: true // 允许连线即使中间有断点
-                        }]
-                    },
-                    options: { responsive: true, plugins: { legend: { display: false } } }
+                document.getElementById('mediaTimer').innerText = `第 ${set}/3 组`;
+                document.getElementById('mediaSubtitle').innerText = steps[stepIndex];
+                speak(steps[stepIndex], () => {
+                    stepIndex++;
+                    if(stepIndex >= steps.length) {
+                        stepIndex = 0;
+                        set++;
+                        setTimeout(runStep, 2000); // 组间休息
+                    } else {
+                        // 屏气保持逻辑
+                        if(stepIndex === 4) { // 刚刚读完"屏气"
+                            let hold = 5;
+                            const hTimer = setInterval(() => {
+                                document.getElementById('mediaSubtitle').innerText = `保持... ${hold}`;
+                                hold--;
+                                if(hold < 0) { clearInterval(hTimer); runStep(); }
+                            }, 1000);
+                        } else {
+                            setTimeout(runStep, 1000);
+                        }
+                    }
                 });
             };
+            runStep();
+        }
 
-            createChart('chartHabit', 'bar', '完成任务数', taskData, '#ff7eb9');
-            createChart('chartWeight', 'line', '体重 (kg)', weightData, '#3b82f6');
-            createChart('chartWaist', 'line', '腰围 (cm)', waistData, '#10b981');
+        function speak(txt, cb) {
+            synth.cancel();
+            const u = new SpeechSynthesisUtterance(txt);
+            u.rate = 0.9;
+            u.onend = cb;
+            synth.speak(u);
+        }
+
+        // 2. 欢快慢走音乐 (Web Audio API 生成，无需外链)
+        function startMusic() {
+            showMedia('music');
+            document.getElementById('mediaTitle').innerText = "欢快慢走";
+            document.getElementById('mediaSubtitle').innerText = "享受这 15 分钟的律动...";
+            
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            audioCtx.resume();
+            isPlaying = true;
+            
+            let timeLeft = 900; // 15分钟
+            activeInterval = setInterval(() => {
+                timeLeft--;
+                const m = Math.floor(timeLeft/60);
+                const s = timeLeft%60;
+                document.getElementById('mediaTimer').innerText = `${m}:${s<10?'0':''}${s}`;
+                if(timeLeft <= 0) { stopMedia(); speak("15分钟慢走结束，你太棒了！"); }
+            }, 1000);
+
+            // 生成一段轻快的 8-bit 琶音旋律 Loop
+            const notes = [261.6, 329.6, 392.0, 523.2, 392.0, 329.6]; // C E G C G E
+            let noteIdx = 0;
+            
+            const playNextNote = () => {
+                if(!isPlaying) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.value = notes[noteIdx % notes.length];
+                
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+                
+                noteIdx++;
+                setTimeout(playNextNote, 250); // 每秒4个音符，120BPM
+            };
+            playNextNote();
+        }
+
+        function checkVideo(input) {
+            const f = input.files[0];
+            if(f && f.size > 100*1024*1024) alert("视频太大啦！"); // 简单检查
+        }
+
+        // --- 报表系统 (Charts) ---
+        let chartRefs = {};
+        
+        function renderCharts() {
+            // 获取近7天 Keys
+            const labels = [];
+            const dataWeight = [];
+            const dataWaist = [];
+            const dataTasks = [];
+            
+            let totalTasks = 0;
+            let activeDays = 0;
+            
+            for(let i=6; i>=0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = d.toISOString().split('T')[0];
+                labels.push(d.toLocaleDateString('zh-CN', {month:'numeric', day:'numeric'}));
+                
+                const rec = db.history[key];
+                if(rec) {
+                    dataWeight.push(rec.weight);
+                    dataWaist.push(rec.waist);
+                    const done = (rec.checks || []).filter(Boolean).length;
+                    dataTasks.push(done);
+                    if(done > 0) activeDays++;
+                    totalTasks += done;
+                } else {
+                    dataWeight.push(null);
+                    dataWaist.push(null);
+                    dataTasks.push(0);
+                }
+            }
+            
+            // 更新总结
+            const rate = activeDays > 0 ? Math.round(totalTasks / (activeDays * 15) * 100) : 0;
+            document.getElementById('weekRate').innerText = rate + "%";
+            document.getElementById('weekSummary').innerText = `过去7天你活跃了 ${activeDays} 天，共完成 ${totalTasks} 项自律任务。${rate>80 ? '状态神勇！' : '继续加油哦！'}`;
+
+            drawChart('chartHabit', 'bar', labels, dataTasks, '#ff7eb9');
+            drawChart('chartWeight', 'line', labels, dataWeight, '#3b82f6');
+            drawChart('chartWaist', 'line', labels, dataWaist, '#10b981');
+        }
+
+        function drawChart(id, type, labels, data, color) {
+            if(chartRefs[id]) chartRefs[id].destroy();
+            const ctx = document.getElementById(id).getContext('2d');
+            chartRefs[id] = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '数值',
+                        data: data,
+                        backgroundColor: color,
+                        borderColor: color,
+                        tension: 0.3,
+                        spanGaps: true
+                    }]
+                },
+                options: { responsive:true, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero: false} } }
+            });
         }
 
         function switchTab(t) {
-            document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+            ['tasks','social','stats'].forEach(x => document.getElementById('tab-'+x).classList.add('hidden'));
             document.getElementById('tab-'+t).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
